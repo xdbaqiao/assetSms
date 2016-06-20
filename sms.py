@@ -6,20 +6,23 @@ import urllib
 from download import download
 
 class smsSender:
-    def __init__(self):
+    def __init__(self, user, passwd):
+        self.user = user
+        self.passwd = passwd
         self.refer = 'https://wapmail.10086.cn/index.htm'
         self.D = download(refer=self.refer)
         self.url = 'https://wapmail.10086.cn/index.htm'
 
+
     def login(self):
         bag = {}
-        bag['ur'] = '13686898576'
-        bag['pw'] = 'yexinjing16122'
+        bag['ur'] = self.user
+        bag['pw'] = self.passwd
         bag['apct'] = 'on'
         bag['apc'] = '1'
         self.D.get(self.refer)
         m_url, html = self.D.post(url=self.url, data=bag)
-        if '">退出' in html:
+        if 'sid' in m_url:
             print 'Login success!'
             return m_url
         else:
@@ -50,8 +53,8 @@ class smsSender:
                 print 'Sender is no money!'
 
 if __name__ == '__main__':
-    sms = smsSender()
-    recievers = ['13686898576']
+    sms = smsSender(user, passwd)
+    recievers = a_reciever.split(',')
     message = u'今日净值: 1.115, 收益: +11.5% 【From StockFucker】'
     for reciever in recievers:
         sms.sender(reciever, message)
