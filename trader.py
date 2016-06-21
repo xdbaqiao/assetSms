@@ -11,6 +11,7 @@ from download import download
 PLATFORM = 'ht'
 CONFIG_FILE = 'account.json'
 
+#基金当前份额
 NET_RATE = 94053
 
 class trader:
@@ -18,10 +19,13 @@ class trader:
         self.user = easytrader.use(PLATFORM)
         self.user.prepare(CONFIG_FILE)
         self.asset = self.user.balance[0].get('asset_balance')
+        self.f = open('data.csv', 'a')
 
     def get_message(self):
+        #基金当日净值
         date = time.strftime('%Y-%m-%d')
         net_value = self.asset / NET_RATE
+        self.f.write('%s, %s\n' % (date, net_value))
         return str(net_value)
 
 

@@ -15,13 +15,22 @@ def analysis_json(file_name):
         return djson.get('user'), djson.get('passwd'), djson.get('recievers')
 
 def assetSms():
+    last_info = ''
+    message = ''
+    with open('data.csv') as f:
+        last_info = f.readlines()[-1]
     user, passwd, a_reciever = analysis_json(SMS_CONFIG)
-
     asset = trader().get_message()
+    [date, last_asset] = last_info.split(',') if ',' in last_info else ['', '']
+    if date and last_asset:
+        message += u'%s日净值: %.4f, ' % (date, float(last_asset))
+        up_rate = (float(asset) - float(last_asset))/float(last_asset) * 100
+    message += u'%s日净值: %.4f' % (time.strftime('%Y-%m-%d'), float(asset))
+    message += u', 涨 +%.2f%%' % up_rate if up_rate > 0 else u', 跌 -%.2f%%' % up_rate
+    message += u'【From StockFucker】 ' 
+
     sms = smsSender(user, passwd)
     recievers = a_reciever.split(',')
-
-    message = u'%s日净值: %.4f 【From StockFucker】 ' % (time.strftime('%Y-%m-%d'), float(asset))
     for reciever in recievers:
         sms.sender(reciever, message)
 
