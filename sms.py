@@ -53,6 +53,12 @@ class smsSender:
                 print 'Sender is no money!'
 
 if __name__ == '__main__':
+    import json
+    with open('SMS.json') as f:
+        djson = json.load(f)
+        user = djson.get('user')
+        passwd = djson.get('passwd')
+        a_reciever = djson.get('recievers')
     sms = smsSender(user, passwd)
     recievers = a_reciever.split(',')
     message = u'今日净值: 1.115, 收益: +11.5% 【From StockFucker】'

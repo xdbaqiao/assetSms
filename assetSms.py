@@ -14,13 +14,17 @@ def analysis_json(file_name):
         djson = json.load(f)
         return djson.get('user'), djson.get('passwd'), djson.get('recievers')
 
-def assetSms():
+def assetSms(cache=False):
     last_info = ''
+    info = ''
     message = ''
     with open('data.csv') as f:
-        last_info = f.readlines()[-1]
+        last_info, info = f.readlines()[-2:]
     user, passwd, a_reciever = analysis_json(SMS_CONFIG)
-    asset = trader().get_message()
+    if not cache:
+        asset = trader().get_message()
+    else:
+        asset = info.split(',')[1]
     [date, last_asset] = last_info.split(',') if ',' in last_info else ['', '']
     if date and last_asset:
         message += u'%s日净值: %.4f, ' % (date, float(last_asset))
@@ -35,4 +39,4 @@ def assetSms():
         sms.sender(reciever, message)
 
 if __name__ == '__main__':
-    assetSms()
+    assetSms(cache=True)
