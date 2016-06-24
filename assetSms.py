@@ -23,6 +23,7 @@ def assetSms(cache=False):
     user, passwd, a_reciever = analysis_json(SMS_CONFIG)
     if not cache:
         asset = trader().get_message()
+        last_info = info
     else:
         asset = info.split(',')[1]
     [date, last_asset] = last_info.split(',') if ',' in last_info else ['', '']
@@ -30,7 +31,7 @@ def assetSms(cache=False):
         message += u'%s日净值: %.4f, ' % (date, float(last_asset))
         up_rate = (float(asset) - float(last_asset))/float(last_asset) * 100
     message += u'%s日净值: %.4f' % (time.strftime('%Y-%m-%d'), float(asset))
-    message += u', 涨 +%.2f%%' % up_rate if up_rate > 0 else u', 跌 -%.2f%%' % up_rate
+    message += u', 涨 +%.2f%%' % up_rate if up_rate > 0 else u', 跌 %.2f%%' % up_rate
     message += u'【From StockFucker】 ' 
 
     sms = smsSender(user, passwd)
