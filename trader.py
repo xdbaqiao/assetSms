@@ -12,7 +12,6 @@ PLATFORM = 'ht'
 CONFIG_FILE = 'account.json'
 
 #基金当前份额
-NET_RATE = 94053
 
 class trader:
     def __init__(self):
@@ -21,14 +20,14 @@ class trader:
         self.asset = self.user.balance[0].get('asset_balance')
         self.f = open('data.csv', 'a')
 
-    def get_message(self):
+    def get_message(self, net_rate):
         #基金当日净值
         date = time.strftime('%Y-%m-%d')
-        net_value = self.asset / NET_RATE
+        net_value = self.asset / net_rate
         self.f.write('%s, %s\n' % (date, net_value))
         return str(net_value)
 
 
 if __name__ == '__main__':
     t = trader()
-    print t.get_message()
+    print t.get_message(94053)
