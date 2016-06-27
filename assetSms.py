@@ -39,16 +39,18 @@ def assetSms(cache=False):
 
     # 拼接短信内容
     if date and last_asset:
-        #message += u'%s日净值: %.4f，' % (date, float(last_asset))
         up_rate = (float(asset) - float(last_asset))/float(last_asset) * 100
     message += u'%s日净值: %.4f' % (time.strftime('%Y-%m-%d'), float(asset))
     message += u'，涨 +%.2f%%' % up_rate if up_rate > 0 else u'，跌 %.2f%%' % up_rate
 
-    sms = smsSender(user, passwd)
     for num, reciever in enumerate(recievers):
+        sms = smsSender(user, passwd)
         send_message = message + u'，您的账户总资产：%.2f ' % (float(portions[num]) * float(asset))
         send_message += u'【From StockFucker】 ' 
-        sms.sender(reciever, send_message)
+        #sms.senderSMS(reciever, send_message)
+        sms.senderEmail(reciever, send_message)
+        time.sleep(60)
+
 
 if __name__ == '__main__':
-    assetSms(cache=False)
+    assetSms(cache=True)

@@ -29,7 +29,7 @@ class smsSender:
             print 'Login fail!'
             return False
 
-    def sender(self, reciever, message):
+    def senderSMS(self, reciever, message):
         message = message.encode('utf8')
         url = 'http://f.10086.cn/im5/chat/sendNewGroupShortMsg.action'
         m_url = self.login()
@@ -52,6 +52,31 @@ class smsSender:
             else:
                 print 'Sender is no money!'
 
+    def senderEmail(self, reciever, message):
+        message = message.encode('utf8')
+        url = 'http://f.10086.cn/im5/chat/sendNewGroupShortMsg.action'
+        m_url = self.login()
+        w3_url = 'http://m.mail.10086.cn/wp12/w3/mfoperation'
+        sid = re.compile(r'sid=([^&]+)').search(m_url).groups()[0]
+        vn = re.compile(r'vn=([^&]+)').search(m_url).groups()[0]
+        data = {'sid':sid , 'vn':vn, 'cmd':'1000', '':'', 'action':'261', 'e':'101013'}
+        self.D.post(w3_url, data)
+        data = {'sid':sid , 'vn':vn, 'cmd':'2', '':'', 'content':message, 
+                'reciever': '%s,' % reciever,
+                'subject': '今日净值',
+                'showOneRcpt': '0',
+                'priority': '0',
+                'requestReadReceipt': '0',
+                'isHtml': '0',
+                'timing': 'false'}
+        info = self.D.post('http://m.mail.10086.cn/wp12/w3/sendmail', data)
+        info = urllib.unquote(info[1])
+        if '"eroerCode":0,' in info:
+            print 'Send success!'
+        else:
+            m = re.compile(r'"msg":"([^"]+)').search(info)
+            print 'ERROR: %s' % urllib.unquote(m.groups()[0])
+
 if __name__ == '__main__':
     import json
     with open('SMS.json') as f:
@@ -63,4 +88,4 @@ if __name__ == '__main__':
     recievers = a_reciever.split(',')
     message = u'今日净值: 1.115, 收益: +11.5% 【From StockFucker】'
     for reciever in recievers:
-        sms.sender(reciever, message)
+        sms.senderSMS(reciever, message)
