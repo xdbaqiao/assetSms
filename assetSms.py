@@ -4,6 +4,7 @@
 import re
 import time
 import json
+from datetime import datetime
 from trader import trader
 from mail import sendMail
 
@@ -45,7 +46,10 @@ def assetSms(cache=False):
     for num, reciever in enumerate(recievers):
         send_message = message + u'您的账户总资产：%.2f </h3><br><p>' % (float(portions[num]) * float(asset))
         send_message += u'【From StockFucker】 </p></html></body>' 
-        sendMail(user, passwd, reciever, send_message)
+        if '396539169' not in reciever:
+            sendMail(user, passwd, reciever, send_message)
+        elif '396539169' in reciever and datetime.now().weekday() == 4:
+            sendMail(user, passwd, reciever, send_message)
         time.sleep(60)
 
 if __name__ == '__main__':
