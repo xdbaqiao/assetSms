@@ -5,7 +5,7 @@ import re
 import time
 import json
 from trader import trader
-from sms import smsSender
+from mail import sendMail
 
 SMS_CONFIG = 'SMS.json'
 
@@ -40,17 +40,13 @@ def assetSms(cache=False):
     # 拼接短信内容
     if date and last_asset:
         up_rate = (float(asset) - float(last_asset))/float(last_asset) * 100
-    message += u'%s日净值: %.4f' % (time.strftime('%Y-%m-%d'), float(asset))
-    message += u'，涨 +%.2f%%' % up_rate if up_rate > 0 else u'，跌 %.2f%%' % up_rate
-
+    message += u'<html><body><h3>%s 日净值<html><body><h3> %.4f' % (time.strftime('%Y-%m-%d'), float(asset))
+    message += u'，涨 +%.2f%%</h3><br><h3>' % up_rate if up_rate > 0 else u'，跌 %.2f%%</h3><br><h3>' % up_rate
     for num, reciever in enumerate(recievers):
-        sms = smsSender(user, passwd)
-        send_message = message + u'，您的账户总资产：%.2f ' % (float(portions[num]) * float(asset))
-        send_message += u'【From StockFucker】 ' 
-        #sms.senderSMS(reciever, send_message)
-        sms.senderEmail(reciever, send_message)
+        send_message = message + u'您的账户总资产：%.2f </h3><br><p>' % (float(portions[num]) * float(asset))
+        send_message += u'【From StockFucker】 </p></html></body>' 
+        sendMail(user, passwd, reciever, send_message)
         time.sleep(60)
 
-
 if __name__ == '__main__':
-    assetSms(cache=True)
+    assetSms(cache=False)
