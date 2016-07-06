@@ -21,14 +21,18 @@ def assetSms(cache=False):
     last_info = ''
     info = ''
     message = ''
+    # 读取昨日数据，存放于data.csv
     with open('data.csv') as f:
         last_info, info = f.readlines()[-2:]
+    # 读取配置信息
     user, passwd, a_reciever, a_portion = analysis_json(SMS_CONFIG)
+
     recievers = a_reciever.split(',')
     portions = a_portion.split(',')
-
     assert len(recievers) == len(portions)
+
     if not cache:
+        # 不读取cache，则app上获取份额
         sum_portions = sum([float(i) for i in portions])
         asset = trader().get_message(sum_portions)
         last_info = info

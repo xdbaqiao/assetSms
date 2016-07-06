@@ -7,25 +7,26 @@ from email.header import Header
 from email.mime.text import MIMEText
 from email.utils import parseaddr, formataddr
 
-host='smtp.163.com'  #设置服务器
+HOST = 'smtp.163.com'  #设置服务器
 
-def _format_addr(s):
-    name, addr = parseaddr(s)
-    return formataddr(( \
-        Header(name, 'utf-8').encode(), \
-        addr.encode('utf-8') if isinstance(addr, unicode) else addr))
+def _format_addr(message):
+    name, addr = parseaddr(message)
+    return formataddr((
+        Header(name, 'utf-8').encode(),
+        addr.encode('utf-8') if isinstance(addr, unicode) else addr
+        ))
   
 def sendMail(user, passwd, reciever, message):  
-    msg = MIMEText(message, _subtype='html', _charset='utf-8')  
-    #msg = MIMEText(message, _subtype='plain', _charset='utf-8')  
-    msg['Subject'] = Header(u'今日净值', 'utf-8').encode()
-    msg['From'] = _format_addr(u'StockFuckers<%s>' % user)
-    msg['To'] = _format_addr(u'StockFuckers<%s>' % reciever)
-    print 'Send mail to: %s' % reciever
+    bag = MIMEText(message, _subtype='html', _charset='utf-8')  
+    #bag = MIMEText(message, _subtype='plain', _charset='utf-8')  
+    bag['Subject'] = Header(u'今日净值', 'utf-8').encode()
+    bag['From'] = _format_addr(u'StockFuckers<%s>' % user)
+    bag['To'] = _format_addr(u'StockFuckers<%s>' % reciever)
+    print 'Sending mail to: %s' % reciever
     try:
-        server = smtplib.SMTP(host, 25)  
+        server = smtplib.SMTP(HOST, 25)  
         server.login(user, passwd)  
-        server.sendmail(user, [reciever], msg.as_string())  
+        server.sendmail(user, [reciever], bag.as_string())  
         server.quit()  
         print 'Send success!'
     except Exception, e:
